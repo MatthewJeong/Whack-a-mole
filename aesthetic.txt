@@ -1,0 +1,8 @@
+Aesthetic: Excitement
+
+Features:
+ -Time limit
+ -Flipped keys after a certain # of moles bopped
+ -Hard mode
+ -Increased speed as # of moles bopped increases
+ -Lives
