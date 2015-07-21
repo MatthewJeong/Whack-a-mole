@@ -1,12 +1,21 @@
 game = Object.create(Game.prototype);
 game.keys = ['A', 'S', 'D', 'F'];
+game.time = 30;
 for (var i = 0; i < game.keys.length; i++){
   atom.input.bind(atom.key[game.keys[i]], game.keys[i]);
 };
 atom.currentMoleTime = 0;
 atom.tillNewMole = 2;
+atom.tillNextSpeed = 1;
 game.update = function(dt) {
   atom.currentMoleTime = atom.currentMoleTime + dt;
+  if(game.bop.moles===atom.tillNextSpeed){
+	  atom.tillNewMole = atom.tillNewMole - 0.05;
+	  atom.tillNextSpeed = atom.tillNextSpeed + 1;
+	  if(atom.tillNextSpeed===30){
+		  atom.tillNextSpeed = 0;
+	  }
+  }
   if (atom.currentMoleTime > atom.tillNewMole){
     game.activeMole = Math.floor(Math.random()*4);
     atom.currentMoleTime = 0;
@@ -27,10 +36,17 @@ game.bop = {
   bopped: true,
   total:0,
   moles:0,
+  counter:0,
   draw: function(){
     atom.context.fillStyle = '#000';
     atom.context.font = '130px monospace';
     atom.context.fillText('Score: ' + this.total, 300, 200);
+	this.counter++;
+	if(this.counter%100===0){
+		game.time-=1;
+	}
+	atom.context.font = '60px monospace';
+	atom.context.fillText('Time ' + game.time, 100, 100);
   },
   with_key: function(key){
     if (!!(game.activeMole + 1) === true && key === game.holes[game.activeMole].label){
@@ -45,7 +61,6 @@ game.bop = {
   }
 }
 game.draw = function() {
-  setInterval(timeLimit(),1000);
   this.drawBackground();
   for (var i = 0; i < game.holes.length; i++){
     if (i === game.activeMole){
@@ -163,15 +178,7 @@ game.mole = {
     atom.context.stroke();
   }
 }
-game.time = {
-	time: 30,
-	timeLimit: function(){
-		time = time-1;
-		atom.context.fillStyle = '#000';
-		atom.context.font = '130px monospace';
-		atom.context.fillText('Score: ' + this.total, 300, 200);
-	}
-}
+
 window.onblur = function() {
   return game.stop();
 };
@@ -180,4 +187,3 @@ window.onfocus = function() {
 };
 game.makeHoles(game.keys, 145, atom.height/2 + 85);
 game.run();
-setInterval(game.time.timeLimit(),1000);
